@@ -54,16 +54,76 @@ const tileMap = [
     "XXXXXXXXXXXXXXXXXXX" 
 ];
 
+const wallString = "X";
+const skipString = "O";
+const pacmanString = "P";
+const foodString = " ";
+const blueGhostString = "b";
+const orangeGhostString = "o";
+const pinkGhostString = "p";
+const redGhostString = "r";
+
+
 const walls = new Set();
-const food = new Set();
+const foods = new Set();
 const ghosts = new Set();
 
 let pacman;
 
 function loadMap() {
     walls.clear();
-    food.clear();
+    foods.clear();
     ghosts.clear();
+
+    // Itterate through map to place tiles
+    for (let row = 0; row < rowCount; row++) {
+        for (let column = 0; column < columnCount; column++) {
+            const rowChars = tileMap[row];
+            const tileMapChar = rowChars[column];
+
+            const x = column * tileSize;
+            const y = row * tileSize;
+            
+            switch (tileMapChar) {
+                case wallString:
+                    const wall = new Block(wallImage, x, y, tileSize, tileSize);
+                    walls.add(wall);
+
+                    break;
+                case foodString:
+                    const food = new Block(null, x + 14, y + 14, tileSize, tileSize);
+                    foods.add(food);
+
+                    break;
+                case pacmanString:
+                    pacman = new Block(pacmanRightImage, x, y, tileSize, tileSize);
+
+                    break;
+                
+                // GHOSTS
+                case blueGhostString:
+                    const blueGhost = new Block(blueGhostImage, x, y, tileSize, tileSize);
+                    ghosts.add(blueGhost);
+
+                    break;
+                case orangeGhostString:
+                    const orangeGhost = new Block(orangeGhostImage, x, y, tileSize, tileSize);
+                    ghosts.add(orangeGhost);
+
+                    break;
+                case pinkGhostString:
+                    const pinkGhost = new Block(pinkGhostImage, x, y, tileSize, tileSize);
+                    ghosts.add(pinkGhost);
+
+                    break;
+                case redGhostString:
+                    const redGhost = new Block(redGhostImage, x, y, tileSize, tileSize);
+                    ghosts.add(redGhost);
+
+                    break;
+            }
+        }
+    }
 }
 
 function loadImages() {
@@ -106,4 +166,22 @@ window.onload = function() {
     context = board.getContext("2d"); // Used for drawing on the board
 
     loadImages();
+    loadMap();
+
+    console.log("amount of walls: " + walls.size);
+    console.log("amount of food: " + foods.size);
+    console.log("amount of ghosts: " + ghosts.size);
+}
+
+class Block {
+    constructor(image, x, y, width, height) {
+        this.image = image;
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+
+        this.startX = x;
+        this.startY = y;
+    }
 }
