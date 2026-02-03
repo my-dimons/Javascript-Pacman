@@ -86,40 +86,27 @@ function loadMap() {
             
             switch (tileMapChar) {
                 case wallString:
-                    const wall = new Block(wallImage, x, y, tileSize, tileSize);
-                    walls.add(wall);
-
+                    walls.add(new Block(wallImage, x, y, tileSize, tileSize));
                     break;
                 case foodString:
-                    const food = new Block(null, x + 14, y + 14, tileSize, tileSize);
-                    foods.add(food);
-
+                    foods.add(new Block(null, x + 14, y + 14, tileSize, tileSize));
                     break;
                 case pacmanString:
                     pacman = new Block(pacmanRightImage, x, y, tileSize, tileSize);
-
                     break;
                 
                 // GHOSTS
                 case blueGhostString:
-                    const blueGhost = new Block(blueGhostImage, x, y, tileSize, tileSize);
-                    ghosts.add(blueGhost);
-
+                    ghosts.add(new Block(blueGhostImage, x, y, tileSize, tileSize));
                     break;
                 case orangeGhostString:
-                    const orangeGhost = new Block(orangeGhostImage, x, y, tileSize, tileSize);
-                    ghosts.add(orangeGhost);
-
+                    ghosts.add(new Block(orangeGhostImage, x, y, tileSize, tileSize));
                     break;
                 case pinkGhostString:
-                    const pinkGhost = new Block(pinkGhostImage, x, y, tileSize, tileSize);
-                    ghosts.add(pinkGhost);
-
+                    ghosts.add(new Block(pinkGhostImage, x, y, tileSize, tileSize));
                     break;
                 case redGhostString:
-                    const redGhost = new Block(redGhostImage, x, y, tileSize, tileSize);
-                    ghosts.add(redGhost);
-
+                    ghosts.add(new Block(redGhostImage, x, y, tileSize, tileSize));
                     break;
             }
         }
