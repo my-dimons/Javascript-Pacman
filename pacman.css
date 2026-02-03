@@ -5,3 +5,8 @@ body {
 #board {
     background-color: black;
 }
+
+h1 {
+    text-align: center;
+    color: blue;
+}

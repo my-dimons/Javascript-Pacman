@@ -54,6 +54,7 @@ const tileMap = [
     "XXXXXXXXXXXXXXXXXXX" 
 ];
 
+// Tilemap strings
 const wallString = "X";
 const skipString = "O";
 const pacmanString = "P";
@@ -62,7 +63,6 @@ const blueGhostString = "b";
 const orangeGhostString = "o";
 const pinkGhostString = "p";
 const redGhostString = "r";
-
 
 const walls = new Set();
 const foods = new Set();
@@ -85,6 +85,7 @@ function loadMap() {
             const y = row * tileSize;
             
             switch (tileMapChar) {
+                // MSC.
                 case wallString:
                     walls.add(new Block(wallImage, x, y, tileSize, tileSize));
                     break;
@@ -116,33 +117,44 @@ function loadMap() {
 function loadImages() {
     // GHOSTS
     blueGhostImage = new Image();
-    blueGhostImage.src = "./Sprites/blueGhost";
+    blueGhostImage.src = "./Sprites/blueGhost.png";
 
     orangeGhostImage = new Image();
-    orangeGhostImage.src = "./Sprites/orangeGhost";
+    orangeGhostImage.src = "./Sprites/orangeGhost.png";
 
     pinkGhostImage = new Image();
-    pinkGhostImage.src = "./Sprites/pinkGhost";
+    pinkGhostImage.src = "./Sprites/pinkGhost.png";
 
     redGhostImage = new Image();
-    redGhostImage.src = "./Sprites/redGhost";
+    redGhostImage.src = "./Sprites/redGhost.png";
 
     // PACMAN
     pacmanUpImage = new Image();
-    pacmanUpImage.src = "./Sprites/pacmanUp";
+    pacmanUpImage.src = "./Sprites/pacmanUp.png";
 
     pacmanDownImage = new Image();
-    pacmanDownImage.src = "./Sprites/pacmanDown";
+    pacmanDownImage.src = "./Sprites/pacmanDown.png";
 
     pacmanRightImage = new Image();
-    pacmanRightImage.src = "./Sprites/pacmanRight";
+    pacmanRightImage.src = "./Sprites/pacmanRight.png";
 
     pacmanLeftImage = new Image();
-    pacmanLeftImage.src = "./Sprites/pacmanLeft";
+    pacmanLeftImage.src = "./Sprites/pacmanLeft.png";
 
     // WALLS
     wallImage = new Image();
     wallImage.src = "./Sprites/wall.png";
+}
+
+function update() {
+    draw();
+
+    setTimeout(update, 50) // Update every 50ms for 20fps: 1000(MILLISECONDS)/20(FPS) = 50 (MILLISECONDS)
+}
+
+function draw() {
+    // Draw pacman
+    context.drawImage(pacman.image, pacman.x, pacman.y, pacman.width, pacman.height);
 }
 
 window.onload = function() {
@@ -158,6 +170,8 @@ window.onload = function() {
     console.log("amount of walls: " + walls.size);
     console.log("amount of food: " + foods.size);
     console.log("amount of ghosts: " + ghosts.size);
+
+    update();
 }
 
 class Block {
