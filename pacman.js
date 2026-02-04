@@ -2,8 +2,10 @@
 let board;
 let context;
 
+const fps = calculateFPS(20);
+
 // SIZES
-const rowCount = 21;
+const rowCount = 19;
 const columnCount = 19;
 const tileSize = 32;
 
@@ -68,6 +70,10 @@ const walls = new Set();
 const foods = new Set();
 const ghosts = new Set();
 
+// Food size
+const foodScale = 4;
+const foodOffset = (tileSize - foodScale) / 2;
+
 let pacman;
 
 function loadMap() {
@@ -90,7 +96,7 @@ function loadMap() {
                     walls.add(new Block(wallImage, x, y, tileSize, tileSize));
                     break;
                 case foodString:
-                    foods.add(new Block(null, x + 14, y + 14, tileSize, tileSize));
+                    foods.add(new Block(null, x + foodOffset, y + foodOffset, foodScale, foodScale));
                     break;
                 case pacmanString:
                     pacman = new Block(pacmanRightImage, x, y, tileSize, tileSize);
@@ -149,12 +155,31 @@ function loadImages() {
 function update() {
     draw();
 
-    setTimeout(update, 50) // Update every 50ms for 20fps: 1000(MILLISECONDS)/20(FPS) = 50 (MILLISECONDS)
+    setTimeout(update, fps);
+}
+
+function calculateFPS(fps) {
+    return 1000 / fps; // 1000(MILLISECONDS)/fps = milliseconds needed to achieve fps
 }
 
 function draw() {
     // Draw pacman
     context.drawImage(pacman.image, pacman.x, pacman.y, pacman.width, pacman.height);
+    
+    // Draw ghosts
+    for (let ghost of ghosts.values()) {
+        context.drawImage(ghost.image, ghost.x, ghost.y, ghost.width, ghost.height);
+    }
+
+    // Draw walls
+    for (let wall of walls.values()) {
+        context.drawImage(wall.image, wall.x, wall.y, wall.width, wall.height);
+    }
+
+    for (let food of foods.values()) {
+        context.fillStyle = "#F4E344";
+        context.fillRect(food.x, food.y, food.width, food.height);
+    }
 }
 
 window.onload = function() {
