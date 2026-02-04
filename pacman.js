@@ -175,6 +175,21 @@ function movePacman(e) {
     } else if (e.code == "ArrowLeft" || e.code == "keyA") {
         pacman.updateDirection(Direction.LEFT);
     }
+
+    switch (pacman.direction) {
+        case Direction.UP:
+            pacman.image = pacmanUpImage;
+            break;
+        case Direction.DOWN:
+            pacman.image = pacmanDownImage;
+            break;
+        case Direction.RIGHT:
+            pacman.image = pacmanRightImage;
+            break;
+        case Direction.LEFT:
+            pacman.image = pacmanLeftImage;
+            break;
+    }
 }
 
 function move() {
@@ -269,7 +284,7 @@ class Block {
         this.direction = direction;
 
         this.updateVelocity();
-        
+
         this.x += this.velocityX;
         this.y += this.velocityY;
 
