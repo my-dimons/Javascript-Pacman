@@ -66,15 +66,24 @@ const orangeGhostString = "o";
 const pinkGhostString = "p";
 const redGhostString = "r";
 
+// Tilemap objects
 const walls = new Set();
 const foods = new Set();
 const ghosts = new Set();
+
+let pacman;
 
 // Food size
 const foodScale = 4;
 const foodOffset = (tileSize - foodScale) / 2;
 
-let pacman;
+// Direction
+const Direction = {
+    UP: "U",
+    RIGHT: "R",
+    LEFT: "L",
+    DOWN: "D"
+};
 
 function loadMap() {
     walls.clear();
@@ -152,17 +161,55 @@ function loadImages() {
     wallImage.src = "./Sprites/wall.png";
 }
 
+function calculateFPS(fps) {
+    return 1000 / fps; // 1000(MILLISECONDS)/fps = milliseconds needed to achieve fps
+}
+
+function movePacman(e) {
+    if (e.code == "ArrowUp" || e.code == "keyW") {
+        pacman.updateDirection(Direction.UP);
+    } else if (e.code == "ArrowDown" || e.code == "keyS") {
+        pacman.updateDirection(Direction.DOWN);
+    } else if (e.code == "ArrowRight" || e.code == "keyD") {
+        pacman.updateDirection(Direction.RIGHT);
+    } else if (e.code == "ArrowLeft" || e.code == "keyA") {
+        pacman.updateDirection(Direction.LEFT);
+    }
+}
+
+function move() {
+    pacman.x += pacman.velocityX;
+    pacman.y += pacman.velocityY;
+
+    // Check wall collisions
+    for (let wall of walls.values()) {
+        if (collision(pacman, wall)) {
+            pacman.x -= pacman.velocityX;
+            pacman.y -= pacman.velocityY;
+            break;
+        }
+    }
+}
+
+function collision(a, b) {
+    return a.x < b.x + b.width &&
+           a.x + a.width > b.x &&
+           a.y < b.y + b.height &&
+           a.y + a.height > b.y;
+}
+
 function update() {
+    move();
     draw();
 
     setTimeout(update, fps);
 }
 
-function calculateFPS(fps) {
-    return 1000 / fps; // 1000(MILLISECONDS)/fps = milliseconds needed to achieve fps
-}
+
 
 function draw() {
+    context.clearRect(0, 0, board.width, board.height);
+
     // Draw pacman
     context.drawImage(pacman.image, pacman.x, pacman.y, pacman.width, pacman.height);
     
@@ -188,9 +235,11 @@ window.onload = function() {
     board.width = boardWidth;
 
     context = board.getContext("2d"); // Used for drawing on the board
+    context.imageSmoothingEnabled = false;
 
     loadImages();
     loadMap();
+    this.document.addEventListener("keyup", movePacman);
 
     console.log("amount of walls: " + walls.size);
     console.log("amount of food: " + foods.size);
@@ -209,5 +258,57 @@ class Block {
 
         this.startX = x;
         this.startY = y;
+
+        this.direction = Direction.RIGHT;
+        this.velocityX = 0;
+        this.velocityY = 0;
+    }
+
+    updateDirection(direction) {
+        const prevDirection = this.direction;
+        this.direction = direction;
+
+        this.updateVelocity();
+        
+        this.x += this.velocityX;
+        this.y += this.velocityY;
+
+        for (let wall of walls.values()) {
+            if (collision(this, wall)) {
+                this.x -= this.velocityX;
+                this.y -= this.velocityY;
+
+                this.direction = prevDirection;
+
+                this.updateVelocity();
+                return;
+            }
+        }
+    }
+
+    updateVelocity() {
+        const adjustedTileSize = tileSize / 4;
+
+        switch (this.direction) {
+            case Direction.UP:
+                this.velocityX = 0;
+                this.velocityY = -adjustedTileSize;
+                break;
+
+            case Direction.DOWN:
+                this.velocityX = 0;
+                this.velocityY = adjustedTileSize;
+                break;
+
+            case Direction.LEFT:
+                this.velocityX = -adjustedTileSize;
+                this.velocityY = 0;
+                break;
+
+            case Direction.RIGHT:
+                this.velocityX = adjustedTileSize;
+                this.velocityY = 0;
+                break;
+        }
     }
 }
