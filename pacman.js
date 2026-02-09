@@ -5,7 +5,7 @@ let context;
 const fps = calculateFPS(20);
 
 // SIZES
-const rowCount = 19;
+const rowCount = 21;
 const columnCount = 19;
 const tileSize = 32;
 
@@ -42,7 +42,7 @@ const tileMap = [
     "XXXX XXXX XXXX XXXX",
     "OOOX X       X XOOO",
     "XXXX X XXrXX X XXXX",
-    "O       bpo       O",
+    "X       bpo       X",
     "XXXX X XXXXX X XXXX",
     "OOOX X       X XOOO",
     "XXXX X XXXXX X XXXX",
@@ -85,6 +85,11 @@ const Direction = {
     DOWN: "D"
 };
 
+const foodScore = 10;
+let score = 0;
+let lives = 3;
+let gameOver = false;
+
 function loadMap() {
     walls.clear();
     foods.clear();
@@ -96,8 +101,8 @@ function loadMap() {
             const rowChars = tileMap[row];
             const tileMapChar = rowChars[column];
 
-            const x = column * tileSize;
-            const y = row * tileSize;
+            const x = row * tileSize;
+            const y = column * tileSize;
             
             switch (tileMapChar) {
                 // MSC.
@@ -204,6 +209,38 @@ function move() {
             break;
         }
     }
+
+    for (let ghost of ghosts.values()) {
+
+        if (ghost.x == tileSize * 9 && ghost.direction != Direction.LEFT && ghost.direction != Direction.RIGHT) {
+            ghost.updateDirection(Direction.LEFT);
+        }
+
+        ghost.x += ghost.velocityX;
+        ghost.y += ghost.velocityY;
+
+        for (let wall of walls.values()) {
+            if (collision(ghost, wall) || ghost.x <= 0 || ghost.x + ghost.width >= boardWidth) {
+                ghost.x -= ghost.velocityX;
+                ghost.y -= ghost.velocityY;
+
+                const newDirection = getRandomDirection();
+                ghost.updateDirection(newDirection);
+            }
+        }
+    }
+
+    // Check food collision
+    let foodEaten = null;
+    for (let food of foods.values()) {
+        if (collision(pacman, food)) {
+            foodEaten = food;
+            score += foodScore;
+            break;
+        }
+    }
+
+    foods.delete(foodEaten);    
 }
 
 function collision(a, b) {
@@ -220,7 +257,9 @@ function update() {
     setTimeout(update, fps);
 }
 
-
+function getRandomDirection() {
+    return Direction[Object.keys(Direction)[Math.floor(Math.random() * Object.keys(Direction).length)]];
+}
 
 function draw() {
     context.clearRect(0, 0, board.width, board.height);
@@ -239,8 +278,16 @@ function draw() {
     }
 
     for (let food of foods.values()) {
-        context.fillStyle = "#F4E344";
+        context.fillStyle = "white";
         context.fillRect(food.x, food.y, food.width, food.height);
+    }
+
+    context.fillStyle = "white";
+    context.font = "14px sans-serif";
+    if (gameOver) {
+        context.fillText("Game Over: " + String(score), tileSize / 2, tileSize / 2);
+    } else {
+        context.fillText("Lives: " + String(lives) + "\nScore: " + String(score), tileSize / 2, tileSize / 2);
     }
 }
 
@@ -260,6 +307,11 @@ window.onload = function() {
     console.log("amount of food: " + foods.size);
     console.log("amount of ghosts: " + ghosts.size);
 
+    for (let ghost of ghosts.values()) {
+        const newDirection = getRandomDirection();
+        
+        ghost.updateDirection(newDirection);
+    }
     update();
 }
 
