@@ -211,6 +211,16 @@ function move() {
     }
 
     for (let ghost of ghosts.values()) {
+        if (collision(ghost, pacman)) {
+            lives -= 1;
+
+            if (lives <= 0) {
+                gameOver = true;
+                return;
+            }
+
+            resetPositions();
+        }
 
         if (ghost.x == tileSize * 9 && ghost.direction != Direction.LEFT && ghost.direction != Direction.RIGHT) {
             ghost.updateDirection(Direction.LEFT);
@@ -251,6 +261,10 @@ function collision(a, b) {
 }
 
 function update() {
+    if (gameOver) {
+        return;
+    }
+    
     move();
     draw();
 
@@ -315,6 +329,18 @@ window.onload = function() {
     update();
 }
 
+function resetPositions() {
+    pacman.reset();
+    pacman.velocityX = 0;
+    pacman.velocityY = 0;
+
+    for (let ghost of ghosts.values()) {
+        ghost.reset();
+        const newDirection = getRandomDirection();
+        ghost.updateDirection(newDirection);
+    }
+}
+
 class Block {
     constructor(image, x, y, width, height) {
         this.image = image;
@@ -377,5 +403,10 @@ class Block {
                 this.velocityY = 0;
                 break;
         }
+    }
+
+    reset() {
+        this.x = this.startX;
+        this.y = this.startY;
     }
 }
