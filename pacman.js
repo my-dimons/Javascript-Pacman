@@ -371,6 +371,7 @@ class Block {
         this.startY = y;
 
         this.direction = Direction.RIGHT;
+        this.queuedDirection = Direction.RIGHT;
         this.velocityX = 0;
         this.velocityY = 0;
     }
