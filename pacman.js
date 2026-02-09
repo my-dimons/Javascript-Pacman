@@ -86,8 +86,9 @@ const Direction = {
 };
 
 const foodScore = 10;
+const maxLives = 3;
 let score = 0;
-let lives = 3;
+let lives = maxLives;
 let gameOver = false;
 
 function loadMap() {
@@ -171,6 +172,18 @@ function calculateFPS(fps) {
 }
 
 function movePacman(e) {
+    if (gameOver) {
+        loadMap();
+        resetPositions();
+
+        lives = maxLives;
+        score = 0;
+        gameOver = false;
+        
+        update();
+        return;
+    }
+
     if (e.code == "ArrowUp" || e.code == "keyW") {
         pacman.updateDirection(Direction.UP);
     } else if (e.code == "ArrowDown" || e.code == "keyS") {
@@ -250,7 +263,12 @@ function move() {
         }
     }
 
-    foods.delete(foodEaten);    
+    foods.delete(foodEaten);  
+    
+    if (foods.size <= 0) {
+        loadMap();
+        resetPositions();
+    }
 }
 
 function collision(a, b) {
@@ -264,7 +282,7 @@ function update() {
     if (gameOver) {
         return;
     }
-    
+
     move();
     draw();
 
