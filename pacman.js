@@ -185,13 +185,31 @@ function movePacman(e) {
     }
 
     if (e.code == "ArrowUp" || e.code == "keyW") {
-        pacman.updateDirection(Direction.UP);
+        pacman.queuedDirection = Direction.UP;
     } else if (e.code == "ArrowDown" || e.code == "keyS") {
-        pacman.updateDirection(Direction.DOWN);
+        pacman.queuedDirection = Direction.DOWN;
     } else if (e.code == "ArrowRight" || e.code == "keyD") {
-        pacman.updateDirection(Direction.RIGHT);
+        pacman.queuedDirection = Direction.RIGHT;
     } else if (e.code == "ArrowLeft" || e.code == "keyA") {
-        pacman.updateDirection(Direction.LEFT);
+        pacman.queuedDirection = Direction.LEFT;
+    }
+}
+
+function move() {
+    pacman.x += pacman.velocityX;
+    pacman.y += pacman.velocityY;
+
+    // Check wall collisions
+    for (let wall of walls.values()) {
+        if (collision(pacman, wall)) {
+            pacman.x -= pacman.velocityX;
+            pacman.y -= pacman.velocityY;
+            break;
+        }
+    }
+
+    if (pacman.queuedDirection != pacman.direction) {
+        pacman.updateQueuedDirection();
     }
 
     switch (pacman.direction) {
@@ -208,20 +226,8 @@ function movePacman(e) {
             pacman.image = pacmanLeftImage;
             break;
     }
-}
 
-function move() {
-    pacman.x += pacman.velocityX;
-    pacman.y += pacman.velocityY;
-
-    // Check wall collisions
-    for (let wall of walls.values()) {
-        if (collision(pacman, wall)) {
-            pacman.x -= pacman.velocityX;
-            pacman.y -= pacman.velocityY;
-            break;
-        }
-    }
+    console.log("Pacman Velocity: " + pacman.velocityX + "x, " + pacman.velocityY + "y")
 
     for (let ghost of ghosts.values()) {
         if (collision(ghost, pacman)) {
@@ -374,6 +380,27 @@ class Block {
         this.queuedDirection = Direction.RIGHT;
         this.velocityX = 0;
         this.velocityY = 0;
+    }
+
+    updateQueuedDirection() {
+        const prevDirection = this.direction;
+        this.direction = this.queuedDirection;
+
+        this.updateVelocity();
+
+        this.x += this.velocityX;
+        this.y += this.velocityY;
+
+        for (let wall of walls.values()) {
+            if (collision(this, wall)) {
+                this.x -= this.velocityX;
+                this.y -= this.velocityY;
+
+                this.direction = prevDirection;
+                this.updateVelocity();
+                return;
+            }
+        }
     }
 
     updateDirection(direction) {
