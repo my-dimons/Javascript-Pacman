@@ -32,29 +32,30 @@ let wallImage;
 // -- TILEMAP --
 //X = wall, O = skip, P = pac man, ' ' = food
 //Ghosts: b = blue, o = orange, p = pink, r = red
-const tileMap = [
-    "XXXXXXXXXXXXXXXXXXX",
-    "X        X        X",
-    "X XX XXX X XXX XX X",
-    "X                 X",
-    "X XX X XXXXX X XX X",
-    "X    X       X    X",
-    "XXXX XXXX XXXX XXXX",
-    "OOOX X       X XOOO",
-    "XXXX X XXrXX X XXXX",
-    "X       bpo       X",
-    "XXXX X XXXXX X XXXX",
-    "OOOX X       X XOOO",
-    "XXXX X XXXXX X XXXX",
-    "X        X        X",
-    "X XX XXX X XXX XX X",
-    "X  X     P     X  X",
-    "XX X X XXXXX X X XX",
-    "X    X   X   X    X",
-    "X XXXXXX X XXXXXX X",
-    "X                 X",
-    "XXXXXXXXXXXXXXXXXXX" 
-];
+let tileMap;
+//= [
+//     "XXXXXXXXXXXXXXXXXXX",
+//     "X        X        X",
+//     "X XX XXX X XXX XX X",
+//     "X                 X",
+//     "X XX X XXXXX X XX X",
+//     "X    X       X    X",
+//     "XXXX XXXX XXXX XXXX",
+//     "OOOX X       X XOOO",
+//     "XXXX X XXrXX X XXXX",
+//     "X       bpo       X",
+//     "XXXX X XXXXX X XXXX",
+//     "OOOX X       X XOOO",
+//     "XXXX X XXXXX X XXXX",
+//     "X        X        X",
+//     "X XX XXX X XXX XX X",
+//     "X  X     P     X  X",
+//     "XX X X XXXXX X X XX",
+//     "X    X   X   X    X",
+//     "X XXXXXX X XXXXXX X",
+//     "X                 X",
+//     "XXXXXXXXXXXXXXXXXXX" 
+// ];
 
 // Tilemap strings
 const wallString = "X";
@@ -91,6 +92,29 @@ let score = 0;
 let lives = maxLives;
 let gameOver = false;
 
+function getRandomTilemapString() {
+    const string = Math.floor(Math.random() * 7);
+    switch (string) {
+      case 0:
+        return wallString;
+      case 1:
+        return skipString;
+      case 2: 
+        return pacmanString;
+      case 3: 
+        return foodString;
+      case 4: 
+        return blueGhostString;
+      case 5:
+        return orangeGhostString;
+      case 6:
+        return pinkGhostString;
+      case 7:
+        return redGhostString;
+    }
+
+    return skipString;
+}
 function loadMap() {
     walls.clear();
     foods.clear();
@@ -99,6 +123,10 @@ function loadMap() {
     // Itterate through map to place tiles
     for (let row = 0; row < rowCount; row++) {
         for (let column = 0; column < columnCount; column++) {
+            if (column < columnCount)
+                tileMap += getRandomTilemapString();
+            else 
+                tileMap += "\n";
             const rowChars = tileMap[row];
             const tileMapChar = rowChars[column];
 
