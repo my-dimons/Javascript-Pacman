@@ -122,11 +122,10 @@ function loadMap() {
 
     // Itterate through map to place tiles
     for (let row = 0; row < rowCount; row++) {
+        let mapString;
         for (let column = 0; column < columnCount; column++) {
-            if (column < columnCount)
-                tileMap += getRandomTilemapString();
-            else 
-                tileMap += "\n";
+            mapString += getRandomTilemapString();
+            tileMap[row] = mapString;
             const rowChars = tileMap[row];
             const tileMapChar = rowChars[column];
 
